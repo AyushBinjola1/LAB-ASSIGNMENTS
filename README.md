@@ -1,10 +1,10 @@
 # LAB-ASSIGNMENTS
 
-A collection of lab assignments and practical work for my engineering courses.
+Lab assignments and practical work for my engineering courses.
 
 ## Subjects
 
-* **DS_UNC401** — Data Structures
-* **OOPS_UNC302** — Object Oriented Programming
+* **DS_UNC307** — Data Structures
+* **OOPS_UNC306** — Object Oriented Programming
 
-More assignments will be added as the semester progresses.
+Each subject folder contains numbered `ASSIGNMENT` directories with C++ source files.
