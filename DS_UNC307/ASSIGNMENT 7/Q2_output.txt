@@ -1,0 +1,19 @@
+﻿Enter n: 
+Values of T(n) for n = 1 to 8
+n    T(n-1)+1      T(n-1)+n      T(n-1)+n^2    T(n-1)+log n  Closed form check
+1    1             1             1             1             match
+2    2             3             5             3             match
+3    3             6             14            5             match
+4    4             10            30            8             match
+5    5             15            55            11            match
+6    6             21            91            14            match
+7    7             28            140           17            match
+8    8             36            204           21            match
+
+Execution time in microseconds
+n       T(n-1)+1      T(n-1)+n      T(n-1)+n^2    T(n-1)+log n  
+100     0.0           0.0           0.0           0.0           
+200     0.0           0.0           6000.0        0.0           
+400     0.0           0.0           52542.0       0.0           
+800     0.0           0.0           454939.0      0.0           
+1600    0.0           997.0         3774607.0     0.0           
