@@ -1,126 +1,85 @@
-// Q2: BST traversals and deletion of a node
 #include <iostream>
-#include <string>
 using namespace std;
  
 struct Node {
-    int data;
+    int key;
     Node *left, *right;
-    Node(int d) : data(d), left(NULL), right(NULL) {}
+    Node(int x) : key(x), left(nullptr), right(nullptr) {}
 };
  
-// Insert a key into the BST (duplicates are ignored)
-Node *insert(Node *root, int key) {
+Node* insert(Node* root, int key) {
     if (!root) return new Node(key);
-    if (key < root->data) root->left = insert(root->left, key);
-    else if (key > root->data) root->right = insert(root->right, key);
+    if (key < root->key) root->left = insert(root->left, key);
+    else if (key > root->key) root->right = insert(root->right, key);
     return root;
 }
  
-// ---------- (a) Traversals ----------
-void inorder(Node *r) {                 // Left -> Root -> Right
-    if (!r) return;
-    inorder(r->left);
-    cout << r->data << " ";
-    inorder(r->right);
-}
-void preorder(Node *r) {                // Root -> Left -> Right
-    if (!r) return;
-    cout << r->data << " ";
-    preorder(r->left);
-    preorder(r->right);
-}
-void postorder(Node *r) {               // Left -> Right -> Root
-    if (!r) return;
-    postorder(r->left);
-    postorder(r->right);
-    cout << r->data << " ";
+void inorder(Node* root) {
+    if (!root) return;
+    inorder(root->left);
+    cout << root->key << ' ';
+    inorder(root->right);
 }
  
-Node *findMin(Node *r) {                // leftmost node of a subtree
-    while (r->left) r = r->left;
-    return r;
+void preorder(Node* root) {
+    if (!root) return;
+    cout << root->key << ' ';
+    preorder(root->left);
+    preorder(root->right);
 }
  
-// ---------- (b) Delete a node, keeping the BST property ----------
-// 'verbose' prints which case was used; it is false for the inner deletion in case 3.
-Node *deleteNode(Node *root, int key, bool verbose, bool &found) {
-    if (!root) return NULL;
-    if (key < root->data) {
-        root->left = deleteNode(root->left, key, verbose, found);
-    } else if (key > root->data) {
-        root->right = deleteNode(root->right, key, verbose, found);
-    } else {
-        found = true;
-        if (!root->left && !root->right) {                       // Case 1: leaf
-            if (verbose)
-                cout << "Case 1: " << key << " is a leaf node, it is simply removed\n";
+void postorder(Node* root) {
+    if (!root) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->key << ' ';
+}
+ 
+Node* smallest(Node* root) {
+    while (root->left) root = root->left;
+    return root;
+}
+ 
+Node* removeKey(Node* root, int key) {
+    if (!root) return nullptr;
+    if (key < root->key) root->left = removeKey(root->left, key);
+    else if (key > root->key) root->right = removeKey(root->right, key);
+    else {
+        if (!root->left) {
+            Node* next = root->right;
             delete root;
-            return NULL;
+            return next;
         }
-        if (!root->left || !root->right) {                       // Case 2: one child
-            Node *child = root->left ? root->left : root->right;
-            if (verbose)
-                cout << "Case 2: " << key << " has one child (" << child->data
-                     << "), the child takes its place\n";
+        if (!root->right) {
+            Node* next = root->left;
             delete root;
-            return child;
+            return next;
         }
-        // Case 3: two children -> copy the inorder successor (smallest key of the
-        // right subtree) into this node, then delete the successor from that subtree
-        Node *succ = findMin(root->right);
-        if (verbose)
-            cout << "Case 3: " << key << " has two children, replaced by its "
-                 << "inorder successor " << succ->data << "\n";
-        root->data = succ->data;
-        bool dummy = false;
-        root->right = deleteNode(root->right, succ->data, false, dummy);
+        Node* next = smallest(root->right);
+        root->key = next->key;
+        root->right = removeKey(root->right, next->key);
     }
     return root;
 }
  
-void printTree(Node *r, int space = 0) {   // rotated 90 degrees: right subtree on top
-    if (!r) return;
-    printTree(r->right, space + 6);
-    cout << string(space, ' ') << r->data << "\n";
-    printTree(r->left, space + 6);
-}
-void freeTree(Node *r) {
-    if (!r) return;
-    freeTree(r->left);
-    freeTree(r->right);
-    delete r;
+void clearTree(Node* root) {
+    if (!root) return;
+    clearTree(root->left);
+    clearTree(root->right);
+    delete root;
 }
  
 int main() {
-    // The BST of the figure, built by inserting the keys in this order
     int keys[] = {50, 17, 72, 12, 23, 54, 76, 9, 14, 67};
-    Node *root = NULL;
-    for (int k : keys) root = insert(root, k);
- 
-    cout << "BST (rotated 90 degrees, right subtree on top):\n";
-    printTree(root);
- 
-    cout << "\nInorder   : ";
-    inorder(root);
-    cout << "\nPreorder  : ";
-    preorder(root);
-    cout << "\nPostorder : ";
-    postorder(root);
-    cout << "\n";
- 
-    int K;
-    cout << "\nEnter the key K to delete: ";
-    cin >> K;
-    bool found = false;
-    root = deleteNode(root, K, true, found);
-    if (!found) cout << "Key " << K << " is not present in the BST, nothing deleted\n";
- 
-    cout << "\nBST after deletion:\n";
-    printTree(root);
-    cout << "\nInorder traversal after deletion: ";
-    inorder(root);
-    cout << "\n";
-    freeTree(root);
-    return 0;
+    Node* root = nullptr;
+    for (int key : keys) root = insert(root, key);
+    cout << "Inorder: "; inorder(root); cout << '\n';
+    cout << "Preorder: "; preorder(root); cout << '\n';
+    cout << "Postorder: "; postorder(root); cout << '\n';
+    int k;
+    cout << "Enter key to delete: ";
+    cin >> k;
+    root = removeKey(root, k);
+    cout << "Inorder after deletion: "; inorder(root); cout << '\n';
+    clearTree(root);
 }
